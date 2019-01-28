@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="zed" xsi:noNamespaceSchemaLocation="http://static.spryker.com/schema-01.xsd" namespace="Orm\Zed\CompanyBusinessUnit\Persistence" package="src.Orm.Zed.CompanyBusinessUnit.Persistence">
+<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="zed" xsi:noNamespaceSchemaLocation="http://static.spryker.com/schema-01.xsd" namespace="Orm\Zed\Customer\Persistence" package="src.Orm.Zed.Customer.Persistence">
     <table name="spy_customer" phpName="SpyCustomer">
         <column name="external_reference" type="VARCHAR" size="255" required="true"/>
         <unique name="spy_customer-unique-external_reference">
