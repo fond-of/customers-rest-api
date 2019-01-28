@@ -3,16 +3,18 @@
 namespace FondOfSpryker\Glue\CustomersRestApi;
 
 use FondOfSpryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerClientInterface;
-use Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerReader;
-use Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerReaderInterface;
+use FondOfSpryker\Glue\CustomersRestApi\Processor\Customer\CustomerReader;
+use FondOfSpryker\Glue\CustomersRestApi\Processor\Customer\CustomerReaderInterface;
 use Spryker\Glue\CustomersRestApi\CustomersRestApiFactory as SprykerCustomersRestApiFactory;
+use Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerWriter;
+use Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerWriterInterface;
 
 class CustomersRestApiFactory extends SprykerCustomersRestApiFactory
 {
     /**
-     * @return \Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerReaderInterface
+     * @return \FondOfSpryker\Glue\CustomersRestApi\Processor\Customer\CustomerReaderInterface
      */
-    public function createCustomerReader(): CustomerReaderInterface
+    public function createFondOfCustomerReader(): CustomerReaderInterface
     {
         return new CustomerReader(
             $this->getResourceBuilder(),
@@ -24,6 +26,23 @@ class CustomersRestApiFactory extends SprykerCustomersRestApiFactory
     }
 
     /**
+     * @return \Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerWriterInterface
+     */
+    public function createCustomerWriter(): CustomerWriterInterface
+    {
+        return new CustomerWriter(
+            $this->getCustomerClient(),
+            $this->createFondOfCustomerReader(),
+            $this->getResourceBuilder(),
+            $this->createCustomerResourceMapper(),
+            $this->createRestApiError(),
+            $this->createRestApiValidator(),
+            $this->getCustomerPostRegisterPlugins()
+        );
+    }
+
+    /**
+     * @throws
      * @return \FondOfSpryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerClientInterface
      */
     public function getFondOfCustomerClient(): CustomersRestApiToCustomerClientInterface
