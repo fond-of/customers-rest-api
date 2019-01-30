@@ -2,7 +2,7 @@
 
 namespace FondOfSpryker\Glue\CustomersRestApi\Dependency\Client;
 
-use FondOfSpryker\Client\CustomerB2b\CustomerClientInterface;
+use FondOfSpryker\Client\CustomerB2b\CustomerB2bClientInterface;
 use Generated\Shared\Transfer\CustomerResponseTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
 use Spryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerClientBridge as SprykerCustomersRestApiToCustomerClientBridge;
@@ -10,17 +10,17 @@ use Spryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerCl
 class CustomersRestApiToCustomerClientBridge extends SprykerCustomersRestApiToCustomerClientBridge implements CustomersRestApiToCustomerClientInterface
 {
     /**
-     * @var \FondOfSpryker\Client\CustomerB2b\CustomerClientInterface
+     * @var \FondOfSpryker\Client\CustomerB2b\CustomerB2bClientInterface
      */
     protected $fondOfCustomerClient;
 
     /**
-     * @param \FondOfSpryker\Client\CustomerB2b\CustomerClientInterface $customerClient
+     * @param \FondOfSpryker\Client\CustomerB2b\CustomerB2bClientInterface $customerClient
      */
-    public function __construct(CustomerClientInterface $customerClient)
+    public function __construct(CustomerB2bClientInterface $customerClient)
     {
         parent::__construct($customerClient);
-        $this->customerClient = $customerClient;
+        $this->fondOfCustomerClient = $customerClient;
     }
 
     /**

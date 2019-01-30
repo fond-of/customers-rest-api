@@ -42,11 +42,10 @@ class CustomersRestApiFactory extends SprykerCustomersRestApiFactory
     }
 
     /**
-     * @throws
      * @return \FondOfSpryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerClientInterface
      */
     public function getFondOfCustomerClient(): CustomersRestApiToCustomerClientInterface
     {
-        return $this->getProvidedDependency(CustomersRestApiDependencyProvider::CLIENT_CUSTOMER);
+        return $this->getProvidedDependency(CustomersRestApiDependencyProvider::CLIENT_CUSTOMER_B2B);
     }
 }
