@@ -14,4 +14,11 @@ interface CustomersRestApiToCustomerClientInterface extends SprykerCustomersRest
      * @return \Generated\Shared\Transfer\CustomerResponseTransfer
      */
     public function findCustomerByExternalReference(CustomerTransfer $customerTransfer): CustomerResponseTransfer;
+
+    /**
+     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
+     *
+     * @return \Generated\Shared\Transfer\CustomerTransfer|null
+     */
+    public function findCustomerById(CustomerTransfer $customerTransfer): ?CustomerTransfer;
 }

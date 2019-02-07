@@ -5,8 +5,8 @@ namespace FondOfSpryker\Glue\CustomersRestApi;
 use FondOfSpryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerClientInterface;
 use FondOfSpryker\Glue\CustomersRestApi\Processor\Customer\CustomerReader;
 use FondOfSpryker\Glue\CustomersRestApi\Processor\Customer\CustomerReaderInterface;
+use FondOfSpryker\Glue\CustomersRestApi\Processor\Customer\CustomerWriter;
 use Spryker\Glue\CustomersRestApi\CustomersRestApiFactory as SprykerCustomersRestApiFactory;
-use Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerWriter;
 use Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerWriterInterface;
 
 class CustomersRestApiFactory extends SprykerCustomersRestApiFactory
@@ -42,6 +42,7 @@ class CustomersRestApiFactory extends SprykerCustomersRestApiFactory
     }
 
     /**
+     * @throws
      * @return \FondOfSpryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerClientInterface
      */
     public function getFondOfCustomerClient(): CustomersRestApiToCustomerClientInterface
