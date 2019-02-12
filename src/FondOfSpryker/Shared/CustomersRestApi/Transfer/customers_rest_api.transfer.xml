@@ -5,17 +5,21 @@
 
     <transfer name="RestCustomersAttributes">
         <property name="externalReference" type="string" />
+        <property name="phone" type="string" />
     </transfer>
 
     <transfer name="RestCustomersRequestAttributes">
         <property name="externalReference" type="string" />
+        <property name="phone" type="string" />
     </transfer>
 
     <transfer name="RestCustomersResponseAttributes">
         <property name="externalReference" type="string" />
+        <property name="phone" type="string" />
     </transfer>
 
     <transfer name="RestCustomersRegisterAttributes">
         <property name="externalReference" type="string" />
+        <property name="phone" type="string" />
     </transfer>
 </transfers>
