@@ -84,7 +84,6 @@ class CustomerWriter extends SprykerCustomerWriter implements CustomerWriterInte
      */
     public function isAdmin(RestRequestInterface $restRequest): bool
     {
-       return true;
        try {
            $currentCustomer = $this->customerReader->getCurrentCustomer($restRequest);
            if ($currentCustomer->getCustomerTransfer()->getCustomerReference() === 'PS--1') {
