@@ -14,23 +14,18 @@ use Spryker\Glue\CustomersRestApi\Controller\CustomerResourceController as Spryk
 class CustomerResourceController extends SprykerCustomerResourceController
 {
     /**
-     * @Glue({
-     *     "patch": {
-     *          "summary": [
-     *              "Updates customer data."
-     *          ],
-     *          "parameters": [{
-     *              "name": "Accept-Language",
-     *              "in": "header"
-     *          }],
-     *          "responses": {
-     *              "400": "Failed to save customer.",
-     *              "403": "Unauthorized request.",
-     *              "404": "Customer not found."
-     *          }
-     *     }
-     * })
+     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
      *
+     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
+     */
+    public function getAction(RestRequestInterface $restRequest): RestResponseInterface
+    {
+        return $this->getFactory()
+            ->createFondOfCustomerReader()
+            ->getCustomerByCustomerReference($restRequest);
+    }
+
+    /**
      * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
      * @param \Generated\Shared\Transfer\RestCustomersAttributesTransfer $customerTransfer
      *

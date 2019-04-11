@@ -18,7 +18,7 @@ class CustomerReader extends SprykerCustomerReader implements CustomerReaderInte
     /**
      * @var \FondOfSpryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerClientInterface
      */
-    protected $customerClient;
+    protected $customerClientFondOf;
 
     /**
      * @param \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceBuilderInterface $restResourceBuilder
@@ -35,7 +35,7 @@ class CustomerReader extends SprykerCustomerReader implements CustomerReaderInte
         RestApiValidatorInterface $restApiValidator
     ) {
         parent::__construct($restResourceBuilder, $customerClient, $customerResourceMapper, $restApiError, $restApiValidator);
-        $this->customerClient = $customerClient;
+        $this->customerClientFondOf = $customerClient;
     }
 
     /**
@@ -48,7 +48,7 @@ class CustomerReader extends SprykerCustomerReader implements CustomerReaderInte
         try {
             // set reference id as external reference
             $customerTransfer = (new CustomerTransfer())->setExternalReference($restRequest->getResource()->getId());
-            $customerTransfer = $this->customerClient->findCustomerByExternalReference($customerTransfer);
+            $customerTransfer = $this->customerClientFondOf->findCustomerByExternalReference($customerTransfer);
             if ($customerTransfer->getIsSuccess()) {
                 return $customerTransfer;
             }
@@ -56,6 +56,8 @@ class CustomerReader extends SprykerCustomerReader implements CustomerReaderInte
             // do nothing
         }
 
-        return parent::findCustomer($restRequest);
+        $customerTransfer = (new CustomerTransfer())->setCustomerReference($restRequest->getResource()->getId());
+
+        return $this->customerClientFondOf->findCustomerByReference($customerTransfer);
     }
 }

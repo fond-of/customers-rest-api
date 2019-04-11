@@ -36,6 +36,16 @@ class CustomersRestApiToCustomerClientBridge extends SprykerCustomersRestApiToCu
     /**
      * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
      *
+     * @return \Generated\Shared\Transfer\CustomerResponseTransfer
+     */
+    public function findCustomerByReference(CustomerTransfer $customerTransfer): CustomerResponseTransfer
+    {
+        return $this->fondOfCustomerClient->findCustomerByReference($customerTransfer);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
+     *
      * @return \Generated\Shared\Transfer\CustomerTransfer|null
      */
     public function findCustomerById(CustomerTransfer $customerTransfer): ?CustomerTransfer
