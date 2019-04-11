@@ -1,0 +1,13 @@
+customers:
+  post:
+    salutation:
+    - Optional:
+        constraints:
+        - NotBlank
+
+addresses:
+  post:
+    salutation:
+    - Optional:
+        constraints:
+        - NotBlank
