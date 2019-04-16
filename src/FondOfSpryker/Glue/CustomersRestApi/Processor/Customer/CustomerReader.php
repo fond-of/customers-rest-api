@@ -3,13 +3,15 @@
 namespace FondOfSpryker\Glue\CustomersRestApi\Processor\Customer;
 
 use FondOfSpryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerClientInterface;
-use Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerReader as SprykerCustomerReader;
 use Generated\Shared\Transfer\CustomerResponseTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
+use Spryker\Glue\CustomersRestApi\CustomersRestApiConfig;
+use Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerReader as SprykerCustomerReader;
 use Spryker\Glue\CustomersRestApi\Processor\Mapper\CustomerResourceMapperInterface;
 use Spryker\Glue\CustomersRestApi\Processor\Validation\RestApiErrorInterface;
 use Spryker\Glue\CustomersRestApi\Processor\Validation\RestApiValidatorInterface;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceBuilderInterface;
+use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface;
 use Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface;
 use Throwable;
 
@@ -59,5 +61,45 @@ class CustomerReader extends SprykerCustomerReader implements CustomerReaderInte
         $customerTransfer = (new CustomerTransfer())->setCustomerReference($restRequest->getResource()->getId());
 
         return $this->customerClientFondOf->findCustomerByReference($customerTransfer);
+    }
+
+    /**
+     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
+     *
+     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
+     */
+    public function getCustomerByCustomerReference(RestRequestInterface $restRequest): RestResponseInterface
+    {
+        $restResponse = $this->restResourceBuilder->createRestResponse();
+        $customerResourceId = $restRequest->getResource()->getId();
+
+        $customerResponseTransfer = $this->getCurrentCustomer($restRequest);
+        if ($customerResourceId) {
+            if (!$this->restApiValidator->isSameCustomerReference($restRequest)) {
+                return $this->restApiError->addCustomerNotFoundError($restResponse);
+            }
+
+            $customerResponseTransfer = $this->findCustomer($restRequest);
+        }
+
+        if (!$customerResponseTransfer->getHasCustomer()) {
+            return $this->restApiError->addCustomerNotFoundError($restResponse);
+        }
+
+        $restCustomersResponseAttributesTransfer = $this
+            ->customerResourceMapper
+            ->mapCustomerTransferToRestCustomersResponseAttributesTransfer($customerResponseTransfer->getCustomerTransfer());
+
+        $restResource = $this->restResourceBuilder->createRestResource(
+            CustomersRestApiConfig::RESOURCE_CUSTOMERS,
+            $customerResponseTransfer->getCustomerTransfer()->getCustomerReference(),
+            $restCustomersResponseAttributesTransfer
+        );
+
+        $restResource->setPayload($customerResponseTransfer->getCustomerTransfer());
+
+        $restResponse->addResource($restResource);
+
+        return $restResponse;
     }
 }
