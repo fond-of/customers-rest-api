@@ -3,8 +3,8 @@
 namespace FondOfSpryker\Glue\CustomersRestApi\Processor\Customer;
 
 use FondOfSpryker\Glue\CustomersRestApi\CustomersRestApiConfig;
-use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\RestCustomersAttributesTransfer;
+use Generated\Shared\Transfer\RestCustomersResponseAttributesTransfer;
 use Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface;
 use Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerWriter as SprykerCustomerWriter;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface;
@@ -65,7 +65,8 @@ class CustomerWriter extends SprykerCustomerWriter implements CustomerWriterInte
 
         $restCustomersResponseAttributesTransfer = $this->customerResourceMapper
             ->mapCustomerTransferToRestCustomersResponseAttributesTransfer(
-                $customerResponseTransfer->getCustomerTransfer()
+                $customerResponseTransfer->getCustomerTransfer(),
+                new RestCustomersResponseAttributesTransfer()
             );
 
         $restResource = $this->restResourceBuilder->createRestResource(

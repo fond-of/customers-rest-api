@@ -37,7 +37,7 @@ class CustomersRestApiFactory extends SprykerCustomersRestApiFactory
             $this->createCustomerResourceMapper(),
             $this->createRestApiError(),
             $this->createRestApiValidator(),
-            $this->getCustomerPostRegisterPlugins()
+            $this->getCustomerPostCreatePlugins()
         );
     }
 
