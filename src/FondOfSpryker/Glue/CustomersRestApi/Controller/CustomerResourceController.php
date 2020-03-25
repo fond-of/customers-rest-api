@@ -3,10 +3,9 @@
 namespace FondOfSpryker\Glue\CustomersRestApi\Controller;
 
 use Generated\Shared\Transfer\RestCustomersAttributesTransfer;
+use Spryker\Glue\CustomersRestApi\Controller\CustomerResourceController as SprykerCustomerResourceController;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface;
 use Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface;
-
-use Spryker\Glue\CustomersRestApi\Controller\CustomerResourceController as SprykerCustomerResourceController;
 
 /**
  * @method \FondOfSpryker\Glue\CustomersRestApi\CustomersRestApiFactory getFactory()
