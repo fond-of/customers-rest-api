@@ -7,7 +7,6 @@ use FondOfSpryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCust
 use Generated\Shared\Transfer\CustomerResponseTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\RestCustomersResponseAttributesTransfer;
-use Generated\Shared\Transfer\RestUserTransfer;
 use Spryker\Glue\CustomersRestApi\CustomersRestApiConfig;
 use Spryker\Glue\CustomersRestApi\Processor\Mapper\CustomerResourceMapperInterface;
 use Spryker\Glue\CustomersRestApi\Processor\Validation\RestApiErrorInterface;
@@ -16,6 +15,7 @@ use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceBuilderInterface;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceInterface;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface;
 use Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface;
+use Spryker\Glue\GlueApplication\Rest\Request\Data\UserInterface;
 use Throwable;
 
 class CustomerReaderTest extends Unit
@@ -81,9 +81,9 @@ class CustomerReaderTest extends Unit
     protected $restResponseInterfaceMock;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Generated\Shared\Transfer\RestUserTransfer
+     * @var \PHPUnit\Framework\MockObject\MockObject|\Generated\Shared\Transfer\UserTransfer
      */
-    protected $restUserTransferMock;
+    protected $userInterfaceMock;
 
     /**
      * @var string
@@ -152,7 +152,7 @@ class CustomerReaderTest extends Unit
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->restUserTransferMock = $this->getMockBuilder(RestUserTransfer::class)
+        $this->userInterfaceMock = $this->getMockBuilder(UserInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -253,10 +253,10 @@ class CustomerReaderTest extends Unit
             ->willReturn($this->id);
 
         $this->restRequestInterfaceMock->expects($this->atLeastOnce())
-            ->method('getRestUser')
-            ->willReturn($this->restUserTransferMock);
+            ->method('getUser')
+            ->willReturn($this->userInterfaceMock);
 
-        $this->restUserTransferMock->expects($this->atLeastOnce())
+        $this->userInterfaceMock->expects($this->atLeastOnce())
             ->method('getNaturalIdentifier')
             ->willReturn($this->naturalIdentifier);
 
@@ -337,10 +337,10 @@ class CustomerReaderTest extends Unit
             ->willReturn($this->id);
 
         $this->restRequestInterfaceMock->expects($this->atLeastOnce())
-            ->method('getRestUser')
-            ->willReturn($this->restUserTransferMock);
+            ->method('getUser')
+            ->willReturn($this->userInterfaceMock);
 
-        $this->restUserTransferMock->expects($this->atLeastOnce())
+        $this->userInterfaceMock->expects($this->atLeastOnce())
             ->method('getNaturalIdentifier')
             ->willReturn($this->naturalIdentifier);
 
@@ -384,10 +384,10 @@ class CustomerReaderTest extends Unit
             ->willReturn($this->id);
 
         $this->restRequestInterfaceMock->expects($this->atLeastOnce())
-            ->method('getRestUser')
-            ->willReturn($this->restUserTransferMock);
+            ->method('getUser')
+            ->willReturn($this->userInterfaceMock);
 
-        $this->restUserTransferMock->expects($this->atLeastOnce())
+        $this->userInterfaceMock->expects($this->atLeastOnce())
             ->method('getNaturalIdentifier')
             ->willReturn($this->naturalIdentifier);
 
