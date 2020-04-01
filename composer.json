@@ -18,6 +18,7 @@
   ],
   "require": {
     "php": ">=7.1",
+    "fond-of-spryker/customer-b2b": "dev-master",
     "spryker/customers-rest-api": "^1.0.0"
   },
   "require-dev": {
@@ -27,7 +28,8 @@
     "mikey179/vfsstream": "^1.6",
     "phpro/grumphp": "^0.14",
     "sebastian/phpcpd": "^4.0",
-    "php-coveralls/php-coveralls": "^2.1"
+    "php-coveralls/php-coveralls": "^2.1",
+    "fond-of-codeception/spryker": "dev-master"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -38,7 +40,8 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "FondOfSpryker\\": "tests/FondOfSpryker/"
+      "FondOfSpryker\\": "tests/FondOfSpryker/",
+      "Generated\\": "src/Generated/"
     }
   }
 }
