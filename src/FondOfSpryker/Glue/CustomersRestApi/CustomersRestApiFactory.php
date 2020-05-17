@@ -42,7 +42,6 @@ class CustomersRestApiFactory extends SprykerCustomersRestApiFactory
     }
 
     /**
-     * @throws
      * @return \FondOfSpryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerClientInterface
      */
     public function getFondOfCustomerClient(): CustomersRestApiToCustomerClientInterface
