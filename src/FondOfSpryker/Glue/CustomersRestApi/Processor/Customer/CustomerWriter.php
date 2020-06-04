@@ -5,10 +5,11 @@ namespace FondOfSpryker\Glue\CustomersRestApi\Processor\Customer;
 use FondOfSpryker\Glue\CustomersRestApi\CustomersRestApiConfig;
 use Generated\Shared\Transfer\RestCustomersAttributesTransfer;
 use Generated\Shared\Transfer\RestCustomersResponseAttributesTransfer;
-use Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface;
 use Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerWriter as SprykerCustomerWriter;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface;
+use Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface;
 use Spryker\Shared\Log\LoggerTrait;
+use Throwable;
 
 class CustomerWriter extends SprykerCustomerWriter implements CustomerWriterInterface
 {
@@ -30,8 +31,10 @@ class CustomerWriter extends SprykerCustomerWriter implements CustomerWriterInte
             return $this->restApiError->addCustomerReferenceMissingError($restResponse);
         }
 
-        if ($restCustomerAttributesTransfer->getPassword()
-            && $restCustomerAttributesTransfer->getPassword() !== $restCustomerAttributesTransfer->getConfirmPassword()) {
+        if (
+            $restCustomerAttributesTransfer->getPassword()
+            && $restCustomerAttributesTransfer->getPassword() !== $restCustomerAttributesTransfer->getConfirmPassword()
+        ) {
             return $this->restApiError->addPasswordsDoNotMatchError(
                 $restResponse,
                 RestCustomersAttributesTransfer::PASSWORD,
@@ -85,15 +88,15 @@ class CustomerWriter extends SprykerCustomerWriter implements CustomerWriterInte
      */
     public function isAdmin(RestRequestInterface $restRequest): bool
     {
-       try {
-           $currentCustomer = $this->customerReader->getCurrentCustomer($restRequest);
-           if ($currentCustomer->getCustomerTransfer()->getCustomerReference() === 'PS--1') {
-               return true;
-           }
-       } catch (\Throwable $throwable) {
+        try {
+            $currentCustomer = $this->customerReader->getCurrentCustomer($restRequest);
+            if ($currentCustomer->getCustomerTransfer()->getCustomerReference() === 'PS--1') {
+                return true;
+            }
+        } catch (Throwable $throwable) {
             // return false
-       }
+        }
 
-       return false;
+        return false;
     }
 }
