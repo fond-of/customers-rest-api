@@ -18,7 +18,7 @@
   ],
   "require": {
     "php": ">=7.1",
-    "fond-of-spryker/customer-b2b": "dev-master",
+    "fond-of-spryker/customer-b2b": "dev-spryker_upgrade",
     "spryker/customers-rest-api": "^1.0.0"
   },
   "require-dev": {
