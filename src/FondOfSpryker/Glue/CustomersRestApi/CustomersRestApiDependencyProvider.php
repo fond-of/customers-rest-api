@@ -11,7 +11,7 @@ use Spryker\Glue\Kernel\Container;
  */
 class CustomersRestApiDependencyProvider extends SprykerCustomersRestApiDependencyProvider
 {
-    public const CLIENT_CUSTOMER_B2B = 'CLIENT_CUSTOMER_B2B';
+    public const ADDITIONAL_CLIENT_CUSTOMER = 'ADDITIONAL_CLIENT_CUSTOMER';
 
     /**
      * @param \Spryker\Glue\Kernel\Container $container
@@ -22,7 +22,7 @@ class CustomersRestApiDependencyProvider extends SprykerCustomersRestApiDependen
     {
         $container = parent::provideDependencies($container);
 
-        $container = $this->addCustomerB2bClient($container);
+        $container = $this->addAdditionalCustomerClient($container);
 
         return $container;
     }
@@ -32,10 +32,10 @@ class CustomersRestApiDependencyProvider extends SprykerCustomersRestApiDependen
      *
      * @return \Spryker\Glue\Kernel\Container
      */
-    protected function addCustomerB2bClient(Container $container): Container
+    protected function addAdditionalCustomerClient(Container $container): Container
     {
-        $container[static::CLIENT_CUSTOMER_B2B] = static function (Container $container) {
-            return new CustomersRestApiToCustomerClientBridge($container->getLocator()->customerB2b()->client());
+        $container[static::ADDITIONAL_CLIENT_CUSTOMER] = static function (Container $container) {
+            return new CustomersRestApiToCustomerClientBridge($container->getLocator()->customer()->client());
         };
 
         return $container;
