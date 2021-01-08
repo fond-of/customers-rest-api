@@ -3,21 +3,15 @@
 namespace FondOfSpryker\Glue\CustomersRestApi\Dependency\Client;
 
 use Codeception\Test\Unit;
-use FondOfSpryker\Client\CustomerB2b\CustomerB2bClientInterface;
-use Generated\Shared\Transfer\CustomerResponseTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
+use Spryker\Client\Customer\CustomerClientInterface;
 
 class CustomersRestApiToCustomerClientBridgeTest extends Unit
 {
     /**
-     * @var \FondOfSpryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerClientBridge
+     * @var \PHPUnit\Framework\MockObject\MockObject|\Spryker\Client\Customer\CustomerClientInterface
      */
-    protected $customersRestApiToCustomerClientBridge;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\FondOfSpryker\Client\CustomerB2b\CustomerB2bClientInterface
-     */
-    protected $customerB2bClientInterfaceMock;
+    protected $customerClientInterfaceMock;
 
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|\Generated\Shared\Transfer\CustomerTransfer
@@ -25,16 +19,16 @@ class CustomersRestApiToCustomerClientBridgeTest extends Unit
     protected $customerTransferMock;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Generated\Shared\Transfer\CustomerResponseTransfer
+     * @var \FondOfSpryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerClientBridge
      */
-    protected $customerResponseTransferMock;
+    protected $customersRestApiToCustomerClientBridge;
 
     /**
      * @return void
      */
     protected function _before(): void
     {
-        $this->customerB2bClientInterfaceMock = $this->getMockBuilder(CustomerB2bClientInterface::class)
+        $this->customerClientInterfaceMock = $this->getMockBuilder(CustomerClientInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -42,66 +36,26 @@ class CustomersRestApiToCustomerClientBridgeTest extends Unit
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->customerResponseTransferMock = $this->getMockBuilder(CustomerResponseTransfer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->customersRestApiToCustomerClientBridge = new CustomersRestApiToCustomerClientBridge(
-            $this->customerB2bClientInterfaceMock
+            $this->customerClientInterfaceMock
         );
     }
 
     /**
      * @return void
      */
-    public function testFindCustomerByExternalReference(): void
+    public function testGetCustomerById(): void
     {
-        $this->customerB2bClientInterfaceMock->expects($this->atLeastOnce())
-            ->method('findCustomerByExternalReference')
-            ->with($this->customerTransferMock)
-            ->willReturn($this->customerResponseTransferMock);
+        $idCustomer = 1;
 
-        $this->assertInstanceOf(
-            CustomerResponseTransfer::class,
-            $this->customersRestApiToCustomerClientBridge->findCustomerByExternalReference(
-                $this->customerTransferMock
-            )
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function testFindCustomerByReference(): void
-    {
-        $this->customerB2bClientInterfaceMock->expects($this->atLeastOnce())
-            ->method('findCustomerByReference')
-            ->with($this->customerTransferMock)
-            ->willReturn($this->customerResponseTransferMock);
-
-        $this->assertInstanceOf(
-            CustomerResponseTransfer::class,
-            $this->customersRestApiToCustomerClientBridge->findCustomerByReference(
-                $this->customerTransferMock
-            )
-        );
-    }
-
-    /**
-     * @return void
-     */
-    public function testFindCustomerById(): void
-    {
-        $this->customerB2bClientInterfaceMock->expects($this->atLeastOnce())
-            ->method('findCustomerById')
-            ->with($this->customerTransferMock)
+        $this->customerClientInterfaceMock->expects(static::atLeastOnce())
+            ->method('getCustomerById')
+            ->with($idCustomer)
             ->willReturn($this->customerTransferMock);
 
-        $this->assertInstanceOf(
-            CustomerTransfer::class,
-            $this->customersRestApiToCustomerClientBridge->findCustomerById(
-                $this->customerTransferMock
-            )
+        static::assertEquals(
+            $this->customerTransferMock,
+            $this->customersRestApiToCustomerClientBridge->getCustomerById($idCustomer)
         );
     }
 }

@@ -2,23 +2,14 @@
 
 namespace FondOfSpryker\Glue\CustomersRestApi\Dependency\Client;
 
-use Generated\Shared\Transfer\CustomerResponseTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
-use Spryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerClientInterface as SprykerCustomersRestApiToCustomerClientInterface;
 
-interface CustomersRestApiToCustomerClientInterface extends SprykerCustomersRestApiToCustomerClientInterface
+interface CustomersRestApiToCustomerClientInterface
 {
     /**
-     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
+     * @param int $idCustomer
      *
-     * @return \Generated\Shared\Transfer\CustomerResponseTransfer
+     * @return \Generated\Shared\Transfer\CustomerTransfer
      */
-    public function findCustomerByExternalReference(CustomerTransfer $customerTransfer): CustomerResponseTransfer;
-
-    /**
-     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
-     *
-     * @return \Generated\Shared\Transfer\CustomerTransfer|null
-     */
-    public function findCustomerById(CustomerTransfer $customerTransfer): ?CustomerTransfer;
+    public function getCustomerById(int $idCustomer): CustomerTransfer;
 }

@@ -3,67 +3,48 @@
 namespace FondOfSpryker\Glue\CustomersRestApi\Processor\Customer;
 
 use Codeception\Test\Unit;
+use Exception;
 use FondOfSpryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerClientInterface;
+use FondOfSpryker\Glue\CustomersRestApi\Processor\RestResponseBuilder\CustomerRestResponseBuilderInterface;
 use Generated\Shared\Transfer\CustomerResponseTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
-use Generated\Shared\Transfer\RestCustomersResponseAttributesTransfer;
-use Spryker\Glue\CustomersRestApi\CustomersRestApiConfig;
-use Spryker\Glue\CustomersRestApi\Processor\Mapper\CustomerResourceMapperInterface;
-use Spryker\Glue\CustomersRestApi\Processor\Validation\RestApiErrorInterface;
-use Spryker\Glue\CustomersRestApi\Processor\Validation\RestApiValidatorInterface;
-use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceBuilderInterface;
+use Generated\Shared\Transfer\RestUserTransfer;
+use Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerReaderInterface;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceInterface;
 use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface;
 use Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface;
-use Spryker\Glue\GlueApplication\Rest\Request\Data\UserInterface;
-use Throwable;
 
 class CustomerReaderTest extends Unit
 {
     /**
-     * @var \FondOfSpryker\Glue\CustomersRestApi\Processor\Customer\CustomerReader
+     * @var \Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerReaderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $customerReader;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceBuilderInterface
-     */
-    protected $restResourceBuilderInterface;
+    protected $customerReaderMock;
 
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|\FondOfSpryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerClientInterface
      */
-    protected $customersRestApiToCustomerClientInterfaceMock;
+    protected $customerClientMock;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Spryker\Glue\CustomersRestApi\Processor\Mapper\CustomerResourceMapperInterface
+     * @var \FondOfSpryker\Glue\CustomersRestApi\Processor\RestResponseBuilder\CustomerRestResponseBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $customerResourceMapperInterfaceMock;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Spryker\Glue\CustomersRestApi\Processor\Validation\RestApiErrorInterface
-     */
-    protected $restApiErrorInterfaceMock;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Spryker\Glue\CustomersRestApi\Processor\Validation\RestApiValidatorInterface
-     */
-    protected $restApiValidatorInterfaceMock;
+    protected $customerRestResponseBuilderMock;
 
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|\Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface
      */
-    protected $restRequestInterfaceMock;
+    protected $restRequestMock;
+
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|\Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
+     */
+    protected $restResponseMock;
 
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|\Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceInterface
      */
-    protected $restResourceInterfaceMock;
-
-    /**
-     * @var string
-     */
-    protected $id;
+    protected $restResourceMock;
 
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|\Generated\Shared\Transfer\CustomerResponseTransfer
@@ -71,109 +52,65 @@ class CustomerReaderTest extends Unit
     protected $customerResponseTransferMock;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Throwable
-     */
-    protected $throwableMock;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
-     */
-    protected $restResponseInterfaceMock;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Generated\Shared\Transfer\UserTransfer
-     */
-    protected $userInterfaceMock;
-
-    /**
-     * @var string
-     */
-    protected $naturalIdentifier;
-
-    /**
      * @var \PHPUnit\Framework\MockObject\MockObject|\Generated\Shared\Transfer\CustomerTransfer
      */
     protected $customerTransferMock;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Generated\Shared\Transfer\RestCustomersResponseAttributesTransfer
+     * @var \Generated\Shared\Transfer\RestUserTransfer|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $restCustomersResponseAttributesTransferMock;
+    protected $restUserTransferMock;
 
     /**
-     * @var string
+     * @var \FondOfSpryker\Glue\CustomersRestApi\Processor\Customer\CustomerReader
      */
-    protected $customerReference;
+    protected $customerReader;
 
     /**
      * @return void
      */
     protected function _before(): void
     {
-        $this->restResourceBuilderInterface = $this->getMockBuilder(RestResourceBuilderInterface::class)
+        $this->customerReaderMock = $this->getMockBuilder(CustomerReaderInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->customersRestApiToCustomerClientInterfaceMock = $this->getMockBuilder(CustomersRestApiToCustomerClientInterface::class)
+        $this->customerClientMock = $this->getMockBuilder(CustomersRestApiToCustomerClientInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->customerResourceMapperInterfaceMock = $this->getMockBuilder(CustomerResourceMapperInterface::class)
+        $this->customerRestResponseBuilderMock = $this->getMockBuilder(CustomerRestResponseBuilderInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->restApiErrorInterfaceMock = $this->getMockBuilder(RestApiErrorInterface::class)
+        $this->restRequestMock = $this->getMockBuilder(RestRequestInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->restApiValidatorInterfaceMock = $this->getMockBuilder(RestApiValidatorInterface::class)
+        $this->restResponseMock = $this->getMockBuilder(RestResponseInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->restRequestInterfaceMock = $this->getMockBuilder(RestRequestInterface::class)
+        $this->restResourceMock = $this->getMockBuilder(RestResourceInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->restResourceInterfaceMock = $this->getMockBuilder(RestResourceInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->id = 'id';
 
         $this->customerResponseTransferMock = $this->getMockBuilder(CustomerResponseTransfer::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->throwableMock = $this->getMockBuilder(Throwable::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->restResponseInterfaceMock = $this->getMockBuilder(RestResponseInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->userInterfaceMock = $this->getMockBuilder(UserInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->naturalIdentifier = 'natural-identifier';
-
         $this->customerTransferMock = $this->getMockBuilder(CustomerTransfer::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->restCustomersResponseAttributesTransferMock = $this->getMockBuilder(RestCustomersResponseAttributesTransfer::class)
+        $this->restUserTransferMock = $this->getMockBuilder(RestUserTransfer::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->customerReference = 'customer-reference';
-
         $this->customerReader = new CustomerReader(
-            $this->restResourceBuilderInterface,
-            $this->customersRestApiToCustomerClientInterfaceMock,
-            $this->customerResourceMapperInterfaceMock,
-            $this->restApiErrorInterfaceMock,
-            $this->restApiValidatorInterfaceMock
+            $this->customerReaderMock,
+            $this->customerClientMock,
+            $this->customerRestResponseBuilderMock
         );
     }
 
@@ -182,57 +119,91 @@ class CustomerReaderTest extends Unit
      */
     public function testFindCustomer(): void
     {
-        $this->restRequestInterfaceMock->expects($this->atLeastOnce())
-            ->method('getResource')
-            ->willReturn($this->restResourceInterfaceMock);
-
-        $this->restResourceInterfaceMock->expects($this->atLeastOnce())
-            ->method('getId')
-            ->willReturn($this->id);
-
-        $this->customersRestApiToCustomerClientInterfaceMock->expects($this->atLeastOnce())
-            ->method('findCustomerByExternalReference')
+        $this->customerReaderMock->expects(static::atLeastOnce())
+            ->method('findCustomer')
+            ->with($this->restRequestMock)
             ->willReturn($this->customerResponseTransferMock);
 
-        $this->customerResponseTransferMock->expects($this->atLeastOnce())
-            ->method('getIsSuccess')
-            ->willReturn(true);
-
-        $this->assertInstanceOf(
-            CustomerResponseTransfer::class,
-            $this->customerReader->findCustomer(
-                $this->restRequestInterfaceMock
-            )
+        static::assertEquals(
+            $this->customerResponseTransferMock,
+            $this->customerReader->findCustomer($this->restRequestMock)
         );
     }
 
     /**
      * @return void
      */
-    public function testFindCustomerCatch(): void
+    public function testGetCurrentCustomer(): void
     {
-        $this->restRequestInterfaceMock->expects($this->atLeastOnce())
-            ->method('getResource')
-            ->willReturn($this->restResourceInterfaceMock);
+        $surrogateIdentifier = 1;
 
-        $this->restResourceInterfaceMock->expects($this->atLeastOnce())
-            ->method('getId')
-            ->willReturn($this->id);
+        $this->restRequestMock->expects(static::atLeastOnce())
+            ->method('getRestUser')
+            ->willReturn($this->restUserTransferMock);
 
-        $this->customersRestApiToCustomerClientInterfaceMock->expects($this->atLeastOnce())
-            ->method('findCustomerByExternalReference')
-            ->willThrowException($this->throwableMock);
+        $this->restUserTransferMock->expects(static::atLeastOnce())
+            ->method('getSurrogateIdentifier')
+            ->willReturn($surrogateIdentifier);
 
-        $this->customersRestApiToCustomerClientInterfaceMock->expects($this->atLeastOnce())
-            ->method('findCustomerByReference')
-            ->willReturn($this->customerResponseTransferMock);
+        $this->customerClientMock->expects(static::atLeastOnce())
+            ->method('getCustomerById')
+            ->with($surrogateIdentifier)
+            ->willReturn($this->customerTransferMock);
 
-        $this->assertInstanceOf(
-            CustomerResponseTransfer::class,
-            $this->customerReader->findCustomer(
-                $this->restRequestInterfaceMock
-            )
-        );
+        $customerResponseTransfer = $this->customerReader->getCurrentCustomer($this->restRequestMock);
+
+        static::assertTrue($customerResponseTransfer->getHasCustomer());
+        static::assertTrue($customerResponseTransfer->getIsSuccess());
+        static::assertEquals($this->customerTransferMock, $customerResponseTransfer->getCustomerTransfer());
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetCurrentCustomerWithException(): void
+    {
+        $surrogateIdentifier = 1;
+
+        $this->restRequestMock->expects(static::atLeastOnce())
+            ->method('getRestUser')
+            ->willReturn($this->restUserTransferMock);
+
+        $this->restUserTransferMock->expects(static::atLeastOnce())
+            ->method('getSurrogateIdentifier')
+            ->willReturn($surrogateIdentifier);
+
+        $this->customerClientMock->expects(static::atLeastOnce())
+            ->method('getCustomerById')
+            ->with($surrogateIdentifier)
+            ->willThrowException(new Exception('foo'));
+
+        $customerResponseTransfer = $this->customerReader->getCurrentCustomer($this->restRequestMock);
+
+        static::assertFalse($customerResponseTransfer->getHasCustomer());
+        static::assertFalse($customerResponseTransfer->getIsSuccess());
+        static::assertEquals(null, $customerResponseTransfer->getCustomerTransfer());
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetCurrentCustomerWithEmptyRestUser(): void
+    {
+        $this->restRequestMock->expects(static::atLeastOnce())
+            ->method('getRestUser')
+            ->willReturn(null);
+
+        $this->restUserTransferMock->expects(static::never())
+            ->method('getSurrogateIdentifier');
+
+        $this->customerClientMock->expects(static::never())
+            ->method('getCustomerById');
+
+        $customerResponseTransfer = $this->customerReader->getCurrentCustomer($this->restRequestMock);
+
+        static::assertFalse($customerResponseTransfer->getHasCustomer());
+        static::assertFalse($customerResponseTransfer->getIsSuccess());
+        static::assertEquals(null, $customerResponseTransfer->getCustomerTransfer());
     }
 
     /**
@@ -240,188 +211,171 @@ class CustomerReaderTest extends Unit
      */
     public function testGetCustomerByCustomerReference(): void
     {
-        $this->restResourceBuilderInterface->expects($this->atLeastOnce())
-            ->method('createRestResponse')
-            ->willReturn($this->restResponseInterfaceMock);
+        $customerReference = 'STORE-1';
+        $surrogateIdentifier = 1;
 
-        $this->restRequestInterfaceMock->expects($this->atLeastOnce())
+        $this->restRequestMock->expects(static::atLeastOnce())
+            ->method('getRestUser')
+            ->willReturn($this->restUserTransferMock);
+
+        $this->customerRestResponseBuilderMock->expects(static::never())
+            ->method('createCustomerNotFoundErrorResponse');
+
+        $this->restRequestMock->expects(static::atLeastOnce())
             ->method('getResource')
-            ->willReturn($this->restResourceInterfaceMock);
+            ->willReturn($this->restResourceMock);
 
-        $this->restResourceInterfaceMock->expects($this->atLeastOnce())
+        $this->restResourceMock->expects(static::atLeastOnce())
             ->method('getId')
-            ->willReturn($this->id);
+            ->willReturn($customerReference);
 
-        $this->restRequestInterfaceMock->expects($this->atLeastOnce())
-            ->method('getUser')
-            ->willReturn($this->userInterfaceMock);
-
-        $this->userInterfaceMock->expects($this->atLeastOnce())
+        $this->restUserTransferMock->expects(static::atLeastOnce())
             ->method('getNaturalIdentifier')
-            ->willReturn($this->naturalIdentifier);
+            ->willReturn($customerReference);
 
-        $this->customersRestApiToCustomerClientInterfaceMock->expects($this->atLeastOnce())
-            ->method('findCustomerByReference')
-            ->willReturn($this->customerResponseTransferMock);
+        $this->restUserTransferMock->expects(static::atLeastOnce())
+            ->method('getSurrogateIdentifier')
+            ->willReturn($surrogateIdentifier);
 
-        $this->restApiValidatorInterfaceMock->expects($this->atLeastOnce())
-            ->method('isSameCustomerReference')
-            ->with($this->restRequestInterfaceMock)
-            ->willReturn(true);
-
-        $this->customersRestApiToCustomerClientInterfaceMock->expects($this->atLeastOnce())
-            ->method('findCustomerByExternalReference')
-            ->willReturn($this->customerResponseTransferMock);
-
-        $this->customerResponseTransferMock->expects($this->atLeastOnce())
-            ->method('getIsSuccess')
-            ->willReturn(true);
-
-        $this->customerResponseTransferMock->expects($this->atLeastOnce())
-            ->method('getHasCustomer')
-            ->willReturn(true);
-
-        $this->customerResponseTransferMock->expects($this->atLeastOnce())
-            ->method('getCustomerTransfer')
+        $this->customerClientMock->expects(static::atLeastOnce())
+            ->method('getCustomerById')
+            ->with($surrogateIdentifier)
             ->willReturn($this->customerTransferMock);
 
-        $this->customerResourceMapperInterfaceMock->expects($this->atLeastOnce())
-            ->method('mapCustomerTransferToRestCustomersResponseAttributesTransfer')
+        $this->customerRestResponseBuilderMock->expects(static::atLeastOnce())
+            ->method('createCustomerRestResponse')
             ->with($this->customerTransferMock)
-            ->willReturn($this->restCustomersResponseAttributesTransferMock);
+            ->willReturn($this->restResponseMock);
 
-        $this->customerTransferMock->expects($this->atLeastOnce())
-            ->method('getCustomerReference')
-            ->willReturn($this->customerReference);
-
-        $this->restResourceBuilderInterface->expects($this->atLeastOnce())
-            ->method('createRestResource')
-            ->with(
-                CustomersRestApiConfig::RESOURCE_CUSTOMERS,
-                $this->customerReference,
-                $this->restCustomersResponseAttributesTransferMock
-            )->willReturn($this->restResourceInterfaceMock);
-
-        $this->restResourceInterfaceMock->expects($this->atLeastOnce())
-            ->method('setPayload')
-            ->willReturnSelf();
-
-        $this->restResponseInterfaceMock->expects($this->atLeastOnce())
-            ->method('addResource')
-            ->with($this->restResourceInterfaceMock)
-            ->willReturnSelf();
-
-        $this->assertInstanceOf(
-            RestResponseInterface::class,
-            $this->customerReader->getCustomerByCustomerReference(
-                $this->restRequestInterfaceMock
-            )
+        static::assertEquals(
+            $this->restResponseMock,
+            $this->customerReader->getCustomerByCustomerReference($this->restRequestMock)
         );
     }
 
     /**
      * @return void
      */
-    public function testGetCustomerByCustomerReferenceCustomerNotFound(): void
+    public function testGetCustomerByCustomerReferenceWithEmptyRestUser(): void
     {
-        $this->restResourceBuilderInterface->expects($this->atLeastOnce())
-            ->method('createRestResponse')
-            ->willReturn($this->restResponseInterfaceMock);
+        $this->restRequestMock->expects(static::atLeastOnce())
+            ->method('getRestUser')
+            ->willReturn(null);
 
-        $this->restRequestInterfaceMock->expects($this->atLeastOnce())
-            ->method('getResource')
-            ->willReturn($this->restResourceInterfaceMock);
+        $this->customerRestResponseBuilderMock->expects(static::atLeastOnce())
+            ->method('createCustomerNotFoundErrorResponse')
+            ->willReturn($this->restResponseMock);
 
-        $this->restResourceInterfaceMock->expects($this->atLeastOnce())
-            ->method('getId')
-            ->willReturn($this->id);
+        $this->restRequestMock->expects(static::never())
+            ->method('getResource');
 
-        $this->restRequestInterfaceMock->expects($this->atLeastOnce())
-            ->method('getUser')
-            ->willReturn($this->userInterfaceMock);
+        $this->restResourceMock->expects(static::never())
+            ->method('getId');
 
-        $this->userInterfaceMock->expects($this->atLeastOnce())
-            ->method('getNaturalIdentifier')
-            ->willReturn($this->naturalIdentifier);
+        $this->restUserTransferMock->expects(static::never())
+            ->method('getNaturalIdentifier');
 
-        $this->customersRestApiToCustomerClientInterfaceMock->expects($this->atLeastOnce())
-            ->method('findCustomerByReference')
-            ->willReturn($this->customerResponseTransferMock);
+        $this->restUserTransferMock->expects(static::never())
+            ->method('getSurrogateIdentifier');
 
-        $this->restApiValidatorInterfaceMock->expects($this->atLeastOnce())
-            ->method('isSameCustomerReference')
-            ->with($this->restRequestInterfaceMock)
-            ->willReturn(false);
+        $this->customerClientMock->expects(static::never())
+            ->method('getCustomerById');
 
-        $this->restApiErrorInterfaceMock->expects($this->atLeastOnce())
-            ->method('addCustomerNotFoundError')
-            ->with($this->restResponseInterfaceMock)
-            ->willReturn($this->restResponseInterfaceMock);
+        $this->customerRestResponseBuilderMock->expects(static::never())
+            ->method('createCustomerRestResponse');
 
-        $this->assertInstanceOf(
-            RestResponseInterface::class,
-            $this->customerReader->getCustomerByCustomerReference(
-                $this->restRequestInterfaceMock
-            )
+        static::assertEquals(
+            $this->restResponseMock,
+            $this->customerReader->getCustomerByCustomerReference($this->restRequestMock)
         );
     }
 
     /**
      * @return void
      */
-    public function testGetCustomerByCustomerReferenceCustomerNotFoundNoCustomer(): void
+    public function testGetCustomerByCustomerReferenceWithWrongCustomerReference(): void
     {
-        $this->restResourceBuilderInterface->expects($this->atLeastOnce())
-            ->method('createRestResponse')
-            ->willReturn($this->restResponseInterfaceMock);
+        $customerReference = 'STORE-1';
+        $currentCustomerReference = 'STORE-2';
 
-        $this->restRequestInterfaceMock->expects($this->atLeastOnce())
+        $this->restRequestMock->expects(static::atLeastOnce())
+            ->method('getRestUser')
+            ->willReturn($this->restUserTransferMock);
+
+        $this->customerRestResponseBuilderMock->expects(static::atLeastOnce())
+            ->method('createCustomerNotFoundErrorResponse')
+            ->willReturn($this->restResponseMock);
+
+        $this->restRequestMock->expects(static::atLeastOnce())
             ->method('getResource')
-            ->willReturn($this->restResourceInterfaceMock);
+            ->willReturn($this->restResourceMock);
 
-        $this->restResourceInterfaceMock->expects($this->atLeastOnce())
+        $this->restResourceMock->expects(static::atLeastOnce())
             ->method('getId')
-            ->willReturn($this->id);
+            ->willReturn($customerReference);
 
-        $this->restRequestInterfaceMock->expects($this->atLeastOnce())
-            ->method('getUser')
-            ->willReturn($this->userInterfaceMock);
-
-        $this->userInterfaceMock->expects($this->atLeastOnce())
+        $this->restUserTransferMock->expects(static::atLeastOnce())
             ->method('getNaturalIdentifier')
-            ->willReturn($this->naturalIdentifier);
+            ->willReturn($currentCustomerReference);
 
-        $this->customersRestApiToCustomerClientInterfaceMock->expects($this->atLeastOnce())
-            ->method('findCustomerByReference')
-            ->willReturn($this->customerResponseTransferMock);
+        $this->restUserTransferMock->expects(static::never())
+            ->method('getSurrogateIdentifier');
 
-        $this->restApiValidatorInterfaceMock->expects($this->atLeastOnce())
-            ->method('isSameCustomerReference')
-            ->with($this->restRequestInterfaceMock)
-            ->willReturn(true);
+        $this->customerClientMock->expects(static::never())
+            ->method('getCustomerById');
 
-        $this->customersRestApiToCustomerClientInterfaceMock->expects($this->atLeastOnce())
-            ->method('findCustomerByExternalReference')
-            ->willReturn($this->customerResponseTransferMock);
+        $this->customerRestResponseBuilderMock->expects(static::never())
+            ->method('createCustomerRestResponse');
 
-        $this->customerResponseTransferMock->expects($this->atLeastOnce())
-            ->method('getIsSuccess')
-            ->willReturn(true);
+        static::assertEquals(
+            $this->restResponseMock,
+            $this->customerReader->getCustomerByCustomerReference($this->restRequestMock)
+        );
+    }
 
-        $this->customerResponseTransferMock->expects($this->atLeastOnce())
-            ->method('getHasCustomer')
-            ->willReturn(false);
+    /**
+     * @return void
+     */
+    public function testGetCustomerByCustomerReferenceWithInvalidData(): void
+    {
+        $customerReference = 'STORE-1';
+        $surrogateIdentifier = 1;
 
-        $this->restApiErrorInterfaceMock->expects($this->atLeastOnce())
-            ->method('addCustomerNotFoundError')
-            ->with($this->restResponseInterfaceMock)
-            ->willReturn($this->restResponseInterfaceMock);
+        $this->restRequestMock->expects(static::atLeastOnce())
+            ->method('getRestUser')
+            ->willReturn($this->restUserTransferMock);
 
-        $this->assertInstanceOf(
-            RestResponseInterface::class,
-            $this->customerReader->getCustomerByCustomerReference(
-                $this->restRequestInterfaceMock
-            )
+        $this->customerRestResponseBuilderMock->expects(static::atLeastOnce())
+            ->method('createCustomerNotFoundErrorResponse')
+            ->willReturn($this->restResponseMock);
+
+        $this->restRequestMock->expects(static::atLeastOnce())
+            ->method('getResource')
+            ->willReturn($this->restResourceMock);
+
+        $this->restResourceMock->expects(static::atLeastOnce())
+            ->method('getId')
+            ->willReturn($customerReference);
+
+        $this->restUserTransferMock->expects(static::atLeastOnce())
+            ->method('getNaturalIdentifier')
+            ->willReturn($customerReference);
+
+        $this->restUserTransferMock->expects(static::atLeastOnce())
+            ->method('getSurrogateIdentifier')
+            ->willReturn($surrogateIdentifier);
+
+        $this->customerClientMock->expects(static::atLeastOnce())
+            ->method('getCustomerById')
+            ->with($surrogateIdentifier)
+            ->willThrowException(new Exception('foo'));
+
+        $this->customerRestResponseBuilderMock->expects(static::never())
+            ->method('createCustomerRestResponse');
+
+        static::assertEquals(
+            $this->restResponseMock,
+            $this->customerReader->getCustomerByCustomerReference($this->restRequestMock)
         );
     }
 }

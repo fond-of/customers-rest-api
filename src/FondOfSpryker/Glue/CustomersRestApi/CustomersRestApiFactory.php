@@ -4,48 +4,31 @@ namespace FondOfSpryker\Glue\CustomersRestApi;
 
 use FondOfSpryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerClientInterface;
 use FondOfSpryker\Glue\CustomersRestApi\Processor\Customer\CustomerReader;
-use FondOfSpryker\Glue\CustomersRestApi\Processor\Customer\CustomerReaderInterface;
-use FondOfSpryker\Glue\CustomersRestApi\Processor\Customer\CustomerWriter;
+use FondOfSpryker\Glue\CustomersRestApi\Processor\RestResponseBuilder\CustomerRestResponseBuilder;
 use Spryker\Glue\CustomersRestApi\CustomersRestApiFactory as SprykerCustomersRestApiFactory;
-use Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerWriterInterface;
+use Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerReaderInterface;
 
 class CustomersRestApiFactory extends SprykerCustomersRestApiFactory
 {
     /**
-     * @return \FondOfSpryker\Glue\CustomersRestApi\Processor\Customer\CustomerReaderInterface
+     * @return \Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerReaderInterface
      */
-    public function createFondOfCustomerReader(): CustomerReaderInterface
+    public function createCustomerReader(): CustomerReaderInterface
     {
-        return new CustomerReader(
-            $this->getResourceBuilder(),
-            $this->getFondOfCustomerClient(),
-            $this->createCustomerResourceMapper(),
-            $this->createRestApiError(),
-            $this->createRestApiValidator()
-        );
-    }
+        $customerRestResponseBuilder = new CustomerRestResponseBuilder($this->getResourceBuilder());
 
-    /**
-     * @return \Spryker\Glue\CustomersRestApi\Processor\Customer\CustomerWriterInterface
-     */
-    public function createCustomerWriter(): CustomerWriterInterface
-    {
-        return new CustomerWriter(
-            $this->getCustomerClient(),
-            $this->createFondOfCustomerReader(),
-            $this->getResourceBuilder(),
-            $this->createCustomerResourceMapper(),
-            $this->createRestApiError(),
-            $this->createRestApiValidator(),
-            $this->getCustomerPostCreatePlugins()
+        return new CustomerReader(
+            parent::createCustomerReader(),
+            $this->getAdditionalCustomerClient(),
+            $customerRestResponseBuilder
         );
     }
 
     /**
      * @return \FondOfSpryker\Glue\CustomersRestApi\Dependency\Client\CustomersRestApiToCustomerClientInterface
      */
-    public function getFondOfCustomerClient(): CustomersRestApiToCustomerClientInterface
+    protected function getAdditionalCustomerClient(): CustomersRestApiToCustomerClientInterface
     {
-        return $this->getProvidedDependency(CustomersRestApiDependencyProvider::CLIENT_CUSTOMER_B2B);
+        return $this->getProvidedDependency(CustomersRestApiDependencyProvider::ADDITIONAL_CLIENT_CUSTOMER);
     }
 }
